@@ -23,7 +23,6 @@ public class UserController {
 	
 	@GetMapping
 	public GenericResponse<?> getAllUsers() {
-		
 		if (users.isEmpty()) {
 			return new GenericResponse<>("Success", new ArrayList<>());
 		}
@@ -37,27 +36,22 @@ public class UserController {
 	}
 	
 	@PostMapping
-	public GenericResponse<?> createUser(
-		@RequestBody UserInput input
-	) {
-		
+	public GenericResponse<?> createUser(@RequestBody UserInput input) {
 		if (input == null || input.getUsername() == null) {
-			return new GenericResponse<>("Failed",
-				CustomException.BadRequest.getResponse("Request body can not be null"));
+			return new GenericResponse<>("Failed", CustomException.BadRequest
+					.getResponse("Request body can not be null."));
 		}
 		
 		if (users.get(input.getUsername()) != null) {
-			return new GenericResponse<>("Failed",
-				CustomException.BadRequest
-					.getResponse("User with this already exists in the system."));
+			return new GenericResponse<>("Failed", CustomException.BadRequest
+					.getResponse("User with this already exists in the system.")
+			);
 		}
 		
 		String userId = UUID.randomUUID().toString();
 		users.put(userId, input.getUsername());
 		
-		return new GenericResponse<>("Success",
-			new UserResponse(userId, input.getUsername())
-		);
+		return new GenericResponse<>("Success", new UserResponse(userId, input.getUsername()));
 	}
 }
 
