@@ -9,14 +9,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/users/v1")
+@RequestMapping("/api/v1/users")
 public class UserController {
 	
 	Map<String, String> users = new HashMap<>();
@@ -52,6 +49,16 @@ public class UserController {
 		users.put(userId, input.getUsername());
 		
 		return new GenericResponse<>("Success", new UserResponse(userId, input.getUsername()));
+	}
+
+	@GetMapping("/{userId}")
+	public GenericResponse<?> getUserById(@PathVariable("userId") String userId) {
+		String username = users.get(userId);
+		if (username == null) {
+			return new GenericResponse<>("User not found", CustomException.BadRequest
+					.getResponse("User with ID: " + userId + " not found."));
+		}
+		return new GenericResponse<>("Success", new UserResponse(userId, username));
 	}
 }
 
